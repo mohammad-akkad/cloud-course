@@ -18,16 +18,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Defines a "model" that we can use to communicate with the
-// frontend or the database
-type BookStore struct {
-	ID         primitive.ObjectID `bson:"_id,omitempty"`
-	BookName   string
-	BookAuthor string
-	BookISBN   string
-	BookPages  int
-	BookYear   int
+type Book struct {
+	ID     primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	Name   string `json:"name"`
+	Author string `json:"author"`
+	Pages  int    `json:"pages"`
+	Year   int    `json:"year"`
+	ISBN   string `json:"isbn,omitempty"`
 }
+
 
 // Wraps the "Template" struct to associate a necessary method
 // to determine the rendering procedure
@@ -91,27 +90,27 @@ func prepareDatabase(client *mongo.Client, dbName string, collecName string) (*m
 // Here we prepare some fictional data and we insert it into the database
 // the first time we connect to it. Otherwise, we check if it already exists.
 func prepareData(client *mongo.Client, coll *mongo.Collection) {
-	startData := []BookStore{
+	startData := []Book{
 		{
-			BookName:   "The Vortex",
-			BookAuthor: "José Eustasio Rivera",
-			BookISBN:   "958-30-0804-4",
-			BookPages:  292,
-			BookYear:   1924,
+			Name:   "The Vortex",
+			Author: "José Eustasio Rivera",
+			ISBN:   "958-30-0804-4",
+			Pages:  292,
+			Year:   1924,
 		},
 		{
-			BookName:   "Frankenstein",
-			BookAuthor: "Mary Shelley",
-			BookISBN:   "978-3-649-64609-9",
-			BookPages:  280,
-			BookYear:   1818,
+			Name:   "Frankenstein",
+			Author: "Mary Shelley",
+			ISBN:   "978-3-649-64609-9",
+			Pages:  280,
+			Year:   1818,
 		},
 		{
-			BookName:   "The Black Cat",
-			BookAuthor: "Edgar Allan Poe",
-			BookISBN:   "978-3-99168-238-7",
-			BookPages:  280,
-			BookYear:   1843,
+			Name:   "The Black Cat",
+			Author: "Edgar Allan Poe",
+			ISBN:   "978-3-99168-238-7",
+			Pages:  280,
+			Year:   1843,
 		},
 	}
 
@@ -124,7 +123,7 @@ func prepareData(client *mongo.Client, coll *mongo.Collection) {
 	// an out parameter.
 	for _, book := range startData {
 		cursor, err := coll.Find(context.TODO(), book)
-		var results []BookStore
+		var results []Book
 		if err = cursor.All(context.TODO(), &results); err != nil {
 			panic(err)
 		}
@@ -153,7 +152,7 @@ func prepareData(client *mongo.Client, coll *mongo.Collection) {
 // interface{} is a special type in Golang, basically a wildcard...
 func findAllBooks(coll *mongo.Collection) []map[string]interface{} {
 	cursor, err := coll.Find(context.TODO(), bson.D{{}})
-	var results []BookStore
+	var results []Book
 	if err = cursor.All(context.TODO(), &results); err != nil {
 		panic(err)
 	}
@@ -162,25 +161,17 @@ func findAllBooks(coll *mongo.Collection) []map[string]interface{} {
 	for _, res := range results {
 		ret = append(ret, map[string]interface{}{
 			"id":         res.ID.Hex(),
-			"name":   res.BookName,
-			"author": res.BookAuthor,
-			"isbn":   res.BookISBN,
-			"pages":  res.BookPages,
-			"year":   res.BookYear,
+			"name":   res.Name,
+			"author": res.Author,
+			"isbn":   res.ISBN,
+			"pages":  res.Pages,
+			"year":   res.Year,
 		})
 	}
 
 	return ret
 }
 
-type Book struct {
-	ID     primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
-	Name   string `json:"name"`
-	Author string `json:"author"`
-	Pages  int    `json:"pages"`
-	Year   int    `json:"year"`
-	ISBN   string `json:"isbn,omitempty"`
-}
 
 func main() {
 	// Connect to the database. Such defer keywords are used once the local
@@ -327,5 +318,5 @@ func main() {
 	})
 
 
-	e.Logger.Fatal(e.Start(":3030"))
+	e.Logger.Fatal(e.Start("0.0.0.0:3030"))
 }
