@@ -13,5 +13,7 @@ RUN go mod tidy
 # Copy the source code from the current directory to the Working Directory inside the container
 COPY . .
 
+ENV DATABASE_URI: mongodb://mongodb:27017
+
 # Command to run the Go application
 CMD ["go", "run", "."]
