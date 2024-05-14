@@ -180,9 +180,13 @@ func main() {
 	// dangling despite the program crashing. Isn't this nice? :D
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-
+	uri := os.Getenv("DATABASE_URI")
+	if len(uri) == 0 {
+		fmt.Printf("failure to load env variable\n")
+		os.Exit(1)
+	}
 	// TODO: make sure to pass the proper username, password, and port
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 
 	// This is another way to specify the call of a function. You can define inline
 	// functions (or anonymous functions, similar to the behavior in Python)
