@@ -29,7 +29,6 @@ type Book struct {
 	ISBN   string `json:"isbn,omitempty"`
 }
 
-
 // Wraps the "Template" struct to associate a necessary method
 // to determine the rendering procedure
 type Template struct {
@@ -174,7 +173,6 @@ func findAllBooks(coll *mongo.Collection) []map[string]interface{} {
 	return ret
 }
 
-
 func main() {
 	// Connect to the database. Such defer keywords are used once the local
 	// context returns; for this case, the local context is the main function
@@ -182,7 +180,9 @@ func main() {
 	// dangling despite the program crashing. Isn't this nice? :D
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-
+	mongoURI := os.Getenv("DATABASE_URI")
+	fmt.Println("DATABASE_URI:", mongoURI) 
+	
 	uri := os.Getenv("DATABASE_URI")
 	if len(uri) == 0 {
 		fmt.Printf("failure to load env variable\n")
