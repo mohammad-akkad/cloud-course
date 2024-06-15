@@ -10,6 +10,7 @@ services:
 
   get_service:
     build:
+      context: .
       dockerfile: Dockerfile
     container_name: get_service
     restart: always
@@ -18,7 +19,7 @@ services:
 
   post_service:
     build:
-
+      context: .
       dockerfile: Dockerfile
     container_name: post_service
     restart: always
@@ -27,7 +28,7 @@ services:
 
   put_service:
     build:
-
+      context: .
       dockerfile: Dockerfile
     container_name: put_service
     restart: always
@@ -36,7 +37,7 @@ services:
 
   delete_service:
     build:
-
+      context: .
       dockerfile: Dockerfile
     container_name: delete_service
     restart: always
@@ -45,6 +46,7 @@ services:
 
   render_service:
     build:
+      context: .
       dockerfile: Dockerfile
     container_name: render_service
     restart: always
