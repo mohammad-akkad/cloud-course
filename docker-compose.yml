@@ -8,15 +8,60 @@ services:
     ports:
       - "27017:27017"
 
-  my-go-app:
+  get_service:
     build:
-      context: .
       dockerfile: Dockerfile
-    container_name: my-go-app
+    container_name: get_service
+    restart: always
+    environment:
+      - DATABASE_URI=mongodb://mongodb:27017
+
+  post_service:
+    build:
+
+      dockerfile: Dockerfile
+    container_name: post_service
+    restart: always
+    environment:
+      - DATABASE_URI=mongodb://mongodb:27017
+
+  put_service:
+    build:
+
+      dockerfile: Dockerfile
+    container_name: put_service
+    restart: always
+    environment:
+      - DATABASE_URI=mongodb://mongodb:27017
+
+  delete_service:
+    build:
+
+      dockerfile: Dockerfile
+    container_name: delete_service
+    restart: always
+    environment:
+      - DATABASE_URI=mongodb://mongodb:27017
+
+  render_service:
+    build:
+      dockerfile: Dockerfile
+    container_name: render_service
+    restart: always
+    environment:
+      - DATABASE_URI=mongodb://mongodb:27017
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
     restart: always
     ports:
-      - "3030:3030"
-    environment:
-      DATABASE_URI: mongodb://mongodb:27017
+      - "80:80"
     depends_on:
-        - mongodb
+      - get_service
+      - post_service
+      - put_service
+      - delete_service
+      - render_service
